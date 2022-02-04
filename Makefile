@@ -20,3 +20,4 @@ client:
 # `make test` will be used after `make setup` in order to run
 # your test suite.
 test:
+	cd ui && yarn run start

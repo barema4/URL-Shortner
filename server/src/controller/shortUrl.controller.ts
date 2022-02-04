@@ -36,7 +36,6 @@ export async function getAnalytics(req: Request, res: Response) {
 export async function getShortUrl(req: Request, res: Response) {
   const { shortId } = req.params;
   const short = await shortUrl.findOne({ shortId }).lean();
-
   if (!short) {
     return res.sendStatus(404);
   }

@@ -1,29 +1,45 @@
 import { Input, Button, Box, InputGroup } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
+import React, { useState } from "react";
 import { SERVER_ENDPOINTS } from "../config";
 
 function URLShortenerForm() {
-  const [destination, setDestination] = useState();
+  const [destination, setDestination] = useState<any>();
   const [shortUrl, setShortUrl] = useState<{
     shortId: string;
   } | null>(null);
 
+  const [error, setError] = useState('')
+
+  const inputRef = React.useRef<any>(null)
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+     setDestination('')
+    if(!destination){
+      setError('Please input a url')
+      inputRef && inputRef.current && inputRef.current.focus()
+      inputRef.current.style.outline = '1px solid red';
+      return
+    }
     if(!validateUrl(destination)){
-      alert('Invalid url')
+      setError('Invalid URL')
       return 
     }
-    
+   
     setShortUrl(null);
     const result = await axios
       .post(`${SERVER_ENDPOINTS}/api/url`, {
         destination,
       })
-      .then((resp) => resp.data);
-
-    setShortUrl(result);
+      .then((resp) => {
+       
+        setShortUrl(resp.data);
+      })
+      .catch((e) => {
+        setError(e.message)
+      })
+       
   }
 
   function validateUrl(value: any) {
@@ -32,23 +48,37 @@ function URLShortenerForm() {
   }
   
   return (
-    <Box pos="relative" zIndex="2" backgroundColor="white" padding="6">
+    <Box display='flex' flexDirection="column">
+    <h3 style={{alignItems: 'center',
+     marginLeft: '84px',
+     paddingBottom:'20px',
+     color: 'blue',
+    fontSize: '14px'}}>STORD URL SHORTENER </h3>
+    <Box pos="relative" zIndex="2" backgroundColor="white" padding="6" border='1px solid gray' height='300px' display="flex"   flexDirection="column" justifyContent={'center'} borderRadius={'8px'}>
       <form onSubmit={handleSubmit}>
-        <p>Please submit your Url</p>
+        <p style={{ paddingBottom: '10px',
+            fontSize: '14px',
+            color: 'blue'}}>    
+          Please submit your Url 
+        </p>
         <InputGroup>
           <Input
             onChange={(e: any) => setDestination(e.target.value)}
             placeholder="https://example.com"
+            ref={inputRef}
           />
-          <Button type="submit">CREATE</Button>
+          <Button type="submit" marginLeft={'10px'} color={'blue'} border={'1px solid gray'} fontSize={'12px'}>CREATE</Button>
         </InputGroup>
       </form>
       {shortUrl && (
-        <a href={`/${shortUrl?.shortId}`}>
+        <a href={`/${shortUrl?.shortId}`} style={{color: 'blue', paddingTop: '10px'}}>
           {window.location.origin}/{shortUrl?.shortId}
         </a>
       )}
+     <p style={{color: 'red', paddingTop: '10px',  fontSize: '14px'}}>{error}</p>
     </Box>
+    </Box>
+    
   );
 }
 

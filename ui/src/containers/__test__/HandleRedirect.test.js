@@ -1,14 +1,14 @@
 import React from 'react'
 import {rest} from 'msw'
 import {setupServer} from 'msw/node'
-import {render, fireEvent, waitFor, screen} from '@testing-library/react'
+import {render, screen} from '@testing-library/react'
 import '@testing-library/jest-dom'
 import {MemoryRouter} from 'react-router-dom';
 import HandleRedirect from '../HandleRedirect'
 
 
 
-describe('auth create tests', () => {
+describe('Handle redirection', () => {
 
     const server = setupServer(
     
